@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Name Builder</title>
+  <style>
+    body { font-family: sans-serif; padding: 20px; }
+    h1, h2 { margin-bottom: 10px; }
+    .container {
+      border: 1px solid #ccc;
+      min-height: 100px;
+      padding: 10px;
+      display: flex;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+    .tile {
+      background: #f0f0f0;
+      border: 1px solid #999;
+      padding: 8px 12px;
+      margin: 5px;
+      cursor: move;
+      border-radius: 4px;
+    }
+    .lineup {
+      min-height: 50px;
+    }
+    #acronym {
+      font-size: 1.2em;
+      font-weight: bold;
+      min-height: 1em;
+    }
+  </style>
+</head>
+<body>
+  <h1>Organization Name Builder</h1>
+  <h2>Available Words</h2>
+  <div id="pool" class="container"></div>
+
+  <h2>Line Up Your Name</h2>
+  <div id="lineup" class="container lineup"></div>
+
+  <h2>Generated Acronym</h2>
+  <div id="acronym"></div>
+
+  <script>
+    const words = [
+      "social media", "library", "open", "data", "database",
+      "repository", "infrastructure", "international", "commons", "archive"
+    ];
+    const pool = document.getElementById('pool');
+    const lineup = document.getElementById('lineup');
+    const acronymDiv = document.getElementById('acronym');
+
+    // Create draggable tiles
+    words.forEach(w => {
+      const tile = document.createElement('div');
+      tile.className = 'tile';
+      tile.textContent = w;
+      tile.draggable = true;
+      tile.id = 'tile-' + w.replace(/\s+/g, '-');
+      tile.addEventListener('dragstart', e => {
+        e.dataTransfer.setData('text/plain', e.target.id);
+        e.target.classList.add('dragging');
+      });
+      tile.addEventListener('dragend', e => {
+        e.target.classList.remove('dragging');
+      });
+      pool.appendChild(tile);
+    });
+
+    // Utility: first letter of each word in order
+    function updateAcronym() {
+      const letters = [...lineup.children]
+        .flatMap(tile => tile.textContent.trim().split(/\s+/).map(word => word[0].toUpperCase()));
+      acronymDiv.textContent = letters.join('');
+    }
+
+    // Helper to find insert position
+    function getDragAfterElement(container, x) {
+      const draggableElements = [...container.querySelectorAll('.tile:not(.dragging)')];
+      return draggableElements.reduce((closest, child) => {
+        const box = child.getBoundingClientRect();
+        const offset = x - box.left - box.width / 2;
+        if (offset < 0 && offset > closest.offset) {
+          return { offset: offset, element: child };
+        } else {
+          return closest;
+        }
+      }, { offset: Number.NEGATIVE_INFINITY }).element;
+    }
+
+    // Set up dragover and drop for pool
+    pool.addEventListener('dragover', e => e.preventDefault());
+    pool.addEventListener('drop', e => {
+      e.preventDefault();
+      const id = e.dataTransfer.getData('text/plain');
+      pool.appendChild(document.getElementById(id));
+      updateAcronym();
+    });
+
+    // Set up dragover and drop for lineup
+    lineup.addEventListener('dragover', e => e.preventDefault());
+    lineup.addEventListener('drop', e => {
+      e.preventDefault();
+      const id = e.dataTransfer.getData('text/plain');
+      const draggingEl = document.getElementById(id);
+      const afterEl = getDragAfterElement(lineup, e.clientX);
+      if (afterEl == null) {
+        lineup.appendChild(draggingEl);
+      } else {
+        lineup.insertBefore(draggingEl, afterEl);
+      }
+      updateAcronym();
+    });
+
+    // Initialize acronym on load
+    updateAcronym();
+  </script>
+</body>
+</html>
