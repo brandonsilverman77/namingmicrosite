@@ -9,7 +9,8 @@
     h1, h2 { margin-bottom: 10px; }
     #controls { margin-bottom: 20px; }
     #new-word { padding: 6px; font-size: 1em; }
-    #add-btn { padding: 6px 12px; font-size: 1em; margin-left: 8px; }
+    #add-btn, #random-btn { padding: 6px 12px; font-size: 1em; }
+    #random-btn { margin-left: 10px; }
     .container {
       border: 1px solid #ccc;
       min-height: 100px;
@@ -37,7 +38,6 @@
     }
     .lineup { min-height: 50px; }
     #acronym { font-size: 1.2em; font-weight: bold; min-height: 1em; }
-    #random-btn { margin-left: 10px; padding: 6px 12px; font-size: 1em; }
   </style>
 </head>
 <body>
@@ -48,11 +48,13 @@
     <button id="add-btn">Add Word</button>
   </div>
 
-  <h2>
-    Line Up Your Name
-    <button id="random-btn">Random</button>
-  </h2>
+  <h2>Available Words</h2>
   <div id="pool" class="container"></div>
+
+  <h2>
+    Arrange Your Name
+    <button id="random-btn">Randomize</button>
+  </h2>
   <div id="lineup" class="container lineup"></div>
 
   <h2>Generated Acronym</h2>
@@ -77,7 +79,6 @@
       tile.draggable = true;
       tile.id = 'tile-' + word.replace(/\s+/g, '-') + '-' + Date.now();
 
-      // Drag events
       tile.addEventListener('dragstart', e => {
         e.dataTransfer.setData('text/plain', e.target.id);
         e.target.classList.add('dragging');
@@ -86,7 +87,6 @@
         e.target.classList.remove('dragging');
       });
 
-      // Delete button
       const del = document.createElement('span');
       del.className = 'delete';
       del.textContent = '×';
@@ -100,10 +100,8 @@
       pool.appendChild(tile);
     }
 
-    // Initialize tiles
     initialWords.forEach(createTile);
 
-    // Add new word
     addBtn.addEventListener('click', () => {
       const w = newWordInput.value.trim();
       if (w) {
@@ -112,7 +110,6 @@
       }
     });
 
-    // Update acronym
     function updateAcronym() {
       const letters = [...lineup.children]
         .flatMap(tile =>
@@ -121,7 +118,6 @@
       acronymDiv.textContent = letters.join('');
     }
 
-    // Helper for ordering
     function getDragAfterElement(container, x) {
       const draggableElements = [...container.querySelectorAll('.tile:not(.dragging)')];
       return draggableElements.reduce((closest, child) => {
@@ -134,7 +130,6 @@
       }, { offset: Number.NEGATIVE_INFINITY }).element;
     }
 
-    // Pool drag/drop
     pool.addEventListener('dragover', e => e.preventDefault());
     pool.addEventListener('drop', e => {
       e.preventDefault();
@@ -144,7 +139,6 @@
       updateAcronym();
     });
 
-    // Lineup drag/drop
     lineup.addEventListener('dragover', e => {
       e.preventDefault();
       const id = e.dataTransfer.getData('text/plain');
@@ -158,21 +152,16 @@
       updateAcronym();
     });
 
-    // Random button: pick 3 or 4 words
     randomBtn.addEventListener('click', () => {
       const allTiles = Array.from(document.querySelectorAll('.tile'));
-      // Shuffle
       const shuffled = allTiles.sort(() => Math.random() - 0.5);
       const count = Math.random() < 0.5 ? 3 : 4;
       const chosen = shuffled.slice(0, count);
-      // Clear lineup
       [...lineup.children].forEach(t => pool.appendChild(t));
-      // Add chosen
       chosen.forEach(t => lineup.appendChild(t));
       updateAcronym();
     });
 
-    // Initial acronym
     updateAcronym();
   </script>
 </body>
