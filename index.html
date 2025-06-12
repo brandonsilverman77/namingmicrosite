@@ -1,122 +1,26 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Name Builder</title>
-  <style>
-    body { font-family: sans-serif; padding: 20px; }
-    h1, h2 { margin-bottom: 10px; }
-    .container {
-      border: 1px solid #ccc;
-      min-height: 100px;
-      padding: 10px;
-      display: flex;
-      flex-wrap: wrap;
-      margin-bottom: 20px;
-    }
-    .tile {
-      background: #f0f0f0;
-      border: 1px solid #999;
-      padding: 8px 12px;
-      margin: 5px;
-      cursor: move;
-      border-radius: 4px;
-    }
-    .lineup {
-      min-height: 50px;
-    }
-    #acronym {
-      font-size: 1.2em;
-      font-weight: bold;
-      min-height: 1em;
-    }
-  </style>
-</head>
-<body>
-  <h1>Organization Name Builder</h1>
-  <h2>Available Words</h2>
-  <div id="pool" class="container"></div>
+Great — aiming for a **formal tone** with **international resonance**, here are some refined acronym options that sound institutional, credible, and globally relevant. Many of these could work well in policy, academic, and diplomatic contexts.
 
-  <h2>Line Up Your Name</h2>
-  <div id="lineup" class="container lineup"></div>
+---
 
-  <h2>Generated Acronym</h2>
-  <div id="acronym"></div>
+### 🌍 **Top Picks for Formal + International Resonance**
 
-  <script>
-    const words = [
-      "social media", "library", "open", "data", "database",
-      "repository", "infrastructure", "international", "commons", "archive"
-    ];
-    const pool = document.getElementById('pool');
-    const lineup = document.getElementById('lineup');
-    const acronymDiv = document.getElementById('acronym');
+| **Acronym** | **Full Name**                                                        | **Why It Works**                                                                                                         |
+| ----------- | -------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| **OSTI**    | *Open Social Technology Infrastructure*                              | Clean, neutral, government-adjacent (evokes U.S. Office of Scientific & Technical Information but with a global mission) |
+| **TRAIL**   | *Transparency, Research, and Infrastructure for Archiving Libraries* | Evokes direction, oversight, and structure; sounds EU- or UN-affiliated                                                  |
+| **SCOPE**   | *Social Communication Open Platform & Exchange*                      | Suggests wide-ranging, systematic observation — perfect for a global monitoring infrastructure                           |
+| **TARDI**   | *Transparency Archive for Research & Data Infrastructure*            | Sturdy, acronym-like name; international-feeling and abstract enough to carry weight                                     |
+| **CITRA**   | *Center for Infrastructure, Transparency, and Research on Archives*  | Sounds like a UNESCO or OECD unit; polished and international                                                            |
+| **ARTI**    | *Archive for Research on Transparency and Infrastructure*            | Evokes “articulation,” lends a formal academic air; pronounceable and neutral                                            |
+| **SALTO**   | *Social Archive & Library for Tooling and Openness*                  | Fluent in multiple languages (means "jump" or "leap" in Spanish/Italian), positive connotation of progress               |
+| **LUMIA**   | *Library for Understanding Media Infrastructure & Archives*          | Evokes light and clarity (from Latin “lumen”), elegant and EU-sounding                                                   |
+| **OPAL**    | *Open Platform for Archival Libraries*                               | Easy to say, globally pronounceable, and suggests clarity and value (like the gem)                                       |
+| **TILAR**   | *Transparency Infrastructure for Libraries and Archival Research*    | Resembles "pillar," a foundation of knowledge; formal and slightly governmental                                          |
 
-    // Create draggable tiles
-    words.forEach(w => {
-      const tile = document.createElement('div');
-      tile.className = 'tile';
-      tile.textContent = w;
-      tile.draggable = true;
-      tile.id = 'tile-' + w.replace(/\s+/g, '-');
-      tile.addEventListener('dragstart', e => {
-        e.dataTransfer.setData('text/plain', e.target.id);
-        e.target.classList.add('dragging');
-      });
-      tile.addEventListener('dragend', e => {
-        e.target.classList.remove('dragging');
-      });
-      pool.appendChild(tile);
-    });
+---
 
-    // Utility: first letter of each word in order
-    function updateAcronym() {
-      const letters = [...lineup.children]
-        .flatMap(tile => tile.textContent.trim().split(/\s+/).map(word => word[0].toUpperCase()));
-      acronymDiv.textContent = letters.join('');
-    }
+Would you like me to:
 
-    // Helper to find insert position
-    function getDragAfterElement(container, x) {
-      const draggableElements = [...container.querySelectorAll('.tile:not(.dragging)')];
-      return draggableElements.reduce((closest, child) => {
-        const box = child.getBoundingClientRect();
-        const offset = x - box.left - box.width / 2;
-        if (offset < 0 && offset > closest.offset) {
-          return { offset: offset, element: child };
-        } else {
-          return closest;
-        }
-      }, { offset: Number.NEGATIVE_INFINITY }).element;
-    }
-
-    // Set up dragover and drop for pool
-    pool.addEventListener('dragover', e => e.preventDefault());
-    pool.addEventListener('drop', e => {
-      e.preventDefault();
-      const id = e.dataTransfer.getData('text/plain');
-      pool.appendChild(document.getElementById(id));
-      updateAcronym();
-    });
-
-    // Set up dragover and drop for lineup
-    lineup.addEventListener('dragover', e => e.preventDefault());
-    lineup.addEventListener('drop', e => {
-      e.preventDefault();
-      const id = e.dataTransfer.getData('text/plain');
-      const draggingEl = document.getElementById(id);
-      const afterEl = getDragAfterElement(lineup, e.clientX);
-      if (afterEl == null) {
-        lineup.appendChild(draggingEl);
-      } else {
-        lineup.insertBefore(draggingEl, afterEl);
-      }
-      updateAcronym();
-    });
-
-    // Initialize acronym on load
-    updateAcronym();
-  </script>
-</body>
-</html>
+* Cross-check a few of these for domain availability (e.g. .org, .global)?
+* Generate international-sounding names without acronyms?
+* Draft a few mission statements or taglines using your favorite acronym?
