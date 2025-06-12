@@ -37,6 +37,7 @@
     }
     .lineup { min-height: 50px; }
     #acronym { font-size: 1.2em; font-weight: bold; min-height: 1em; }
+    #random-btn { margin-left: 10px; padding: 6px 12px; font-size: 1em; }
   </style>
 </head>
 <body>
@@ -47,10 +48,11 @@
     <button id="add-btn">Add Word</button>
   </div>
 
-  <h2>Available Words</h2>
+  <h2>
+    Line Up Your Name
+    <button id="random-btn">Random</button>
+  </h2>
   <div id="pool" class="container"></div>
-
-  <h2>Line Up Your Name</h2>
   <div id="lineup" class="container lineup"></div>
 
   <h2>Generated Acronym</h2>
@@ -66,6 +68,7 @@
     const acronymDiv = document.getElementById('acronym');
     const addBtn = document.getElementById('add-btn');
     const newWordInput = document.getElementById('new-word');
+    const randomBtn = document.getElementById('random-btn');
 
     function createTile(word) {
       const tile = document.createElement('div');
@@ -89,7 +92,7 @@
       del.textContent = '×';
       del.title = 'Delete word';
       del.addEventListener('click', () => {
-        if (tile.parentElement) tile.remove();
+        tile.remove();
         updateAcronym();
       });
       tile.appendChild(del);
@@ -142,18 +145,34 @@
     });
 
     // Lineup drag/drop
-    lineup.addEventListener('dragover', e => e.preventDefault());
-    lineup.addEventListener('drop', e => {
+    lineup.addEventListener('dragover', e => {
       e.preventDefault();
       const id = e.dataTransfer.getData('text/plain');
       const tile = document.getElementById(id);
       const afterEl = getDragAfterElement(lineup, e.clientX);
       if (afterEl == null) lineup.appendChild(tile);
       else lineup.insertBefore(tile, afterEl);
+    });
+    lineup.addEventListener('drop', e => {
+      e.preventDefault();
       updateAcronym();
     });
 
-    // Initialize
+    // Random button: pick 3 or 4 words
+    randomBtn.addEventListener('click', () => {
+      const allTiles = Array.from(document.querySelectorAll('.tile'));
+      // Shuffle
+      const shuffled = allTiles.sort(() => Math.random() - 0.5);
+      const count = Math.random() < 0.5 ? 3 : 4;
+      const chosen = shuffled.slice(0, count);
+      // Clear lineup
+      [...lineup.children].forEach(t => pool.appendChild(t));
+      // Add chosen
+      chosen.forEach(t => lineup.appendChild(t));
+      updateAcronym();
+    });
+
+    // Initial acronym
     updateAcronym();
   </script>
 </body>
