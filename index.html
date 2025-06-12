@@ -7,6 +7,9 @@
   <style>
     body { font-family: sans-serif; padding: 20px; }
     h1, h2 { margin-bottom: 10px; }
+    #controls { margin-bottom: 20px; }
+    #new-word { padding: 6px; font-size: 1em; }
+    #add-btn { padding: 6px 12px; font-size: 1em; margin-left: 8px; }
     .container {
       border: 1px solid #ccc;
       min-height: 100px;
@@ -34,9 +37,6 @@
     }
     .lineup { min-height: 50px; }
     #acronym { font-size: 1.2em; font-weight: bold; min-height: 1em; }
-    #controls { margin-bottom: 20px; }
-    #new-word { padding: 6px; font-size: 1em; }
-    #add-btn { padding: 6px 12px; font-size: 1em; margin-left: 8px; }
   </style>
 </head>
 <body>
@@ -89,7 +89,7 @@
       del.textContent = '×';
       del.title = 'Delete word';
       del.addEventListener('click', () => {
-        tile.remove();
+        if (tile.parentElement) tile.remove();
         updateAcronym();
       });
       tile.appendChild(del);
@@ -113,7 +113,7 @@
     function updateAcronym() {
       const letters = [...lineup.children]
         .flatMap(tile =>
-          tile.firstChild.textContent.trim().split(/\s+/).map(w => w[0].toUpperCase())
+          tile.textContent.replace('×', '').trim().split(/\s+/).map(w => w[0].toUpperCase())
         );
       acronymDiv.textContent = letters.join('');
     }
@@ -131,29 +131,29 @@
       }, { offset: Number.NEGATIVE_INFINITY }).element;
     }
 
-    // Enable dragging
+    // Pool drag/drop
     pool.addEventListener('dragover', e => e.preventDefault());
     pool.addEventListener('drop', e => {
       e.preventDefault();
       const id = e.dataTransfer.getData('text/plain');
-      pool.appendChild(document.getElementById(id));
+      const tile = document.getElementById(id);
+      pool.appendChild(tile);
       updateAcronym();
     });
 
-    lineup.addEventListener('dragover', e => {
-      e.preventDefault();
-      const id = e.dataTransfer.getData('text/plain');
-      const draggingEl = document.getElementById(id);
-      const afterEl = getDragAfterElement(lineup, e.clientX);
-      if (!afterEl) lineup.appendChild(draggingEl);
-      else lineup.insertBefore(draggingEl, afterEl);
-    });
+    // Lineup drag/drop
+    lineup.addEventListener('dragover', e => e.preventDefault());
     lineup.addEventListener('drop', e => {
       e.preventDefault();
+      const id = e.dataTransfer.getData('text/plain');
+      const tile = document.getElementById(id);
+      const afterEl = getDragAfterElement(lineup, e.clientX);
+      if (afterEl == null) lineup.appendChild(tile);
+      else lineup.insertBefore(tile, afterEl);
       updateAcronym();
     });
 
-    // Initial acronym
+    // Initialize
     updateAcronym();
   </script>
 </body>
