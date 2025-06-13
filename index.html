@@ -72,6 +72,7 @@
     const newWordInput = document.getElementById('new-word');
     const randomBtn = document.getElementById('random-btn');
 
+    /* ---------- tile creation ---------- */
     function createTile(word) {
       const tile = document.createElement('div');
       tile.className = 'tile';
@@ -110,6 +111,7 @@
       }
     });
 
+    /* ---------- acronym builder ---------- */
     function updateAcronym() {
       const letters = [...lineup.children]
         .flatMap(tile =>
@@ -118,6 +120,7 @@
       acronymDiv.textContent = letters.join('');
     }
 
+    /* ---------- helper for ordering ---------- */
     function getDragAfterElement(container, x) {
       const draggableElements = [...container.querySelectorAll('.tile:not(.dragging)')];
       return draggableElements.reduce((closest, child) => {
@@ -130,6 +133,7 @@
       }, { offset: Number.NEGATIVE_INFINITY }).element;
     }
 
+    /* ---------- drag-and-drop on pool ---------- */
     pool.addEventListener('dragover', e => e.preventDefault());
     pool.addEventListener('drop', e => {
       e.preventDefault();
@@ -139,19 +143,19 @@
       updateAcronym();
     });
 
-    lineup.addEventListener('dragover', e => {
+    /* ---------- drag-and-drop on lineup (fixed) ---------- */
+    lineup.addEventListener('dragover', e => e.preventDefault());
+    lineup.addEventListener('drop', e => {
       e.preventDefault();
       const id = e.dataTransfer.getData('text/plain');
       const tile = document.getElementById(id);
       const afterEl = getDragAfterElement(lineup, e.clientX);
       if (afterEl == null) lineup.appendChild(tile);
       else lineup.insertBefore(tile, afterEl);
-    });
-    lineup.addEventListener('drop', e => {
-      e.preventDefault();
       updateAcronym();
     });
 
+    /* ---------- randomize button ---------- */
     randomBtn.addEventListener('click', () => {
       const allTiles = Array.from(document.querySelectorAll('.tile'));
       const shuffled = allTiles.sort(() => Math.random() - 0.5);
