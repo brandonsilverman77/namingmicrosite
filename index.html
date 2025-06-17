@@ -101,7 +101,8 @@
       pool.appendChild(tile);
     }
 
-    initialWords.forEach(createTile);
+    // Removed automatic population so the pool starts empty:
+    // initialWords.forEach(createTile);
 
     addBtn.addEventListener('click', () => {
       const w = newWordInput.value.trim();
